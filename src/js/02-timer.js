@@ -1,6 +1,8 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 const refs = {
   dateInput: document.querySelector('#datetime-picker'),
   startBtn: document.querySelector('button[data-start]'),
@@ -10,9 +12,34 @@ const refs = {
   seconds: document.querySelector('span[data-seconds]'),
 };
 
+const options = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+    console.log(selectedDates[0]);
+  },
+};
+
+const timePicker = flatpickr('#datetime-picker', options);
+
+const btnNotActive = true;
+
+refs.startBtn.disabled = btnNotActive;
 
 
 
+function updateTimerValues({ days, hours, minutes, seconds }) {
+  refs.days.textContent = addZero(days);
+  refs.hours.textContent = addZero(hours);
+  refs.minutes.textContent = addZero(minutes);
+  refs.seconds.textContent = addZero(seconds);
+};
+
+function addZero(value) {
+  return String(value).padStart(2, "0");
+};
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
