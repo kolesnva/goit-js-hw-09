@@ -3,8 +3,6 @@ import "flatpickr/dist/flatpickr.min.css";
 
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-
-
 const refs = {
   dateInput: document.querySelector('#datetime-picker'),
   startBtn: document.querySelector('button[data-start]'),
@@ -19,6 +17,8 @@ refs.startBtn.disabled = isDisabled;
 
 let intervalID = null;
 
+const SECOND = 1000;
+
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -31,6 +31,8 @@ const options = {
 
 const timePicker = flatpickr(refs.dateInput, options);
 
+refs.startBtn.addEventListener('click', onStart);
+
 function dateCheck(date) {
   const currentDate = new Date();
 
@@ -41,32 +43,26 @@ function dateCheck(date) {
   }
 }
 
-console.log(timePicker.selectedDates[0]);
-
-refs.startBtn.addEventListener('click', onStart);
-
 function onStart() {
   refs.startBtn.disabled = isDisabled;
   refs.dateInput.disabled = isDisabled;
+
   countdown();
 };
 
 function countdown() {
   intervalID = setInterval(() => {
-    const diff = timePicker.selectedDates[0] - Date.now();
-    const convertedTime = convertMs(timePicker.selectedDates[0] - Date.now());
-    updateTimerValues(convertedTime);
+    const timeDifference = timePicker.selectedDates[0] - Date.now();
+    
+    updateTimerValues(convertMs(timeDifference));
 
-    if (diff < 1000) {
+    if (timeDifference < SECOND) {
       clearInterval(intervalID);
 
-      Notify.success("Ура!")
+      Notify.success("Timer has finished its work!")
     }
-
-  }, 1000)
+  }, SECOND)
 }
-
-
 
 function addZero(value) {
   return String(value).padStart(2, "0");
